@@ -19,9 +19,9 @@ int main() {
     FAMILY_MEMBER *family_members = create_family_members(&distance);
     FAMILY_LIST families = family_list_create(&distance, family_members);
 
-    int option = 0;
+    int option;
 
-    while (option != 4) {
+    while (1) {
         menu();
 
         // Lire l'option choisie par l'utilisateur en utilisant la fonction read_option()
@@ -46,17 +46,13 @@ int main() {
                 break;
             case 4:
                 printf("Au revoir!\n");
-                break;
+                family_list_free(families);
+                free(family_members);
+                directory_free(&directory);
+                distance_free(&distance);
+                return 0;
         }
     }
-
-
-
-//
-//    family_list_free(families);
-//    free(family_members);
-//    directory_free(&directory);
-//    distance_free(&distance);
 }
 
 
