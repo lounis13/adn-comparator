@@ -6,7 +6,7 @@
 #include "sequence.h"
 
 
-void update_dmin(DISTANCE *distance, int i_first, int i_second, double d);
+DISTANCE *update_dmin(DISTANCE *distance, int i_first, int i_second, double d);
 
 DISTANCE distance_init(int capacity) {
     SEQUENCE *sequences = malloc(sizeof(SEQUENCE) * capacity);
@@ -23,8 +23,19 @@ DISTANCE distance_init(int capacity) {
             exit(EXIT_FAILURE);
         }
         distances[i][i] = 0.0;
+        distances[i][i + 1] = MAX_DISTANCE;
+        distances[i][i + 2] = 0.0;
     }
     return (DISTANCE) {0, capacity, sequences, distances, 0};
+}
+
+void distance_free(DISTANCE *distance) {
+    for (int i = 0; i < distance->size; ++i) {
+        sequence_free(distance->sequences[i]);
+        free(distance->distances[i]);
+    }
+    free(distance->sequences);
+    free(distance->distances);
 }
 
 void distance_add(DISTANCE *distance, SEQUENCE sequence) {
@@ -34,54 +45,54 @@ void distance_add(DISTANCE *distance, SEQUENCE sequence) {
         return;
     }
     distance->sequences[index] = sequence;
-    for (int i = 0; i <= index; ++i) {
+    for (int i = 0; i < index; ++i) {
         double d = compute_distance(sequence, distance->sequences[i]);
         distance->distances[index][i] = d;
         if (d > distance->max_distance) distance->max_distance = d;
-        update_dmin(distance, index, i, d);
+        distance = update_dmin(distance, index, i, d);
     }
     (distance->size)++;
 }
 
-void update_dmin(DISTANCE *dis, int i_first, int i_second, double d) {
-    double first_dmin = get_dmin(dis, i_first);
-    double second_dmin = get_dmin(dis, i_second);
+DISTANCE *update_dmin(DISTANCE *dis, int i_first, int i_second, double d) {
+    double first_dmin = *get_dmin(dis, i_first);
+    double second_dmin = *get_dmin(dis, i_second);
     if (d == first_dmin) {
-        dis->distances[i_first][i_first + 1] += 1.0;
+        dis->distances[i_first][i_first + 2] += 1.0;
     }
     if (d == second_dmin) {
-        dis->distances[i_second][i_second + 1] += 1.0;
+        dis->distances[i_second][i_second + 2] += 1.0;
     }
     if (d < first_dmin) {
-        dis->distances[i_first][i_first] = d;
-        dis->distances[i_first][i_first + 1] = 1.0;
+        dis->distances[i_first][i_first + 1] = d;
+        dis->distances[i_first][i_first + 2] = 1.0;
     }
     if (d < second_dmin) {
-        dis->distances[i_second][i_second] = d;
-        dis->distances[i_second][i_second + 1] = 1.0;
+        dis->distances[i_second][i_second + 1] = d;
+        dis->distances[i_second][i_second + 2] = 1.0;
     }
+    return dis;
 }
 
-double get_dmin(DISTANCE *distance, int index) {
-    return distance->distances[index][index];
+double *get_dmin(DISTANCE *distance, int index) {
+    return distance->distances[index] + (index + 1);
 }
 
 int get_dmin_occurrence(DISTANCE *distance, int index) {
-    return (int) distance->distances[index][index + 1];
+    return (int) distance->distances[index][index + 2];
 }
 
 
 void distance_print(DISTANCE distance) {
     for (int i = 0; i < distance.size; ++i) {
         for (int j = 0; j <= i; ++j) {
-            printf("%2.2f\t", distance.distances[i][j]);
+            printf("distance (seq(%d), seq(%d)) = %2.2f\n", (j + 1), (i + 1), distance.distances[i][j]);
         }
         printf("\n");
     }
 }
 
 double distance_get_distance(DISTANCE distance, int first, int second) {
-    // TODO
     if (first > second) return distance.distances[first][second];
     return distance.distances[second][first];
 }
@@ -94,7 +105,4 @@ SEQUENCE distance_get_sequence(DISTANCE distance, int index) {
     return distance.sequences[index];
 }
 
-bool check_index(DISTANCE *distance, int index) {
-    return index >= distance->capacity || index < 0;
-}
 

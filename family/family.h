@@ -1,8 +1,8 @@
 #ifndef ADN_COMPARATOR_FAMILY_H
 #define ADN_COMPARATOR_FAMILY_H
 
-#include "sequence.h"
-#include "distance.h"
+#include "../sequence/sequence.h"
+#include "../sequence/distance.h"
 
 
 typedef struct FAMILY_MEMBER {
@@ -21,5 +21,12 @@ typedef struct FAMILY_NODE {
     struct FAMILY_NODE *next;
 } *FAMILY_LIST, *FAMILY_NODE;
 
-FAMILY_LIST family_list_create(DISTANCE distance);
+FAMILY_MEMBER *create_family_members(DISTANCE *);
+
+FAMILY_LIST family_list_create(DISTANCE *distance, FAMILY_MEMBER *family_members);
+
+void family_list_print(FAMILY_LIST families);
+
+void family_list_free(FAMILY_LIST families);
+
 #endif //ADN_COMPARATOR_FAMILY_H

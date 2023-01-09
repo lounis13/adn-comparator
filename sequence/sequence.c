@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "file.h"
+#include "../util/file.h"
 #include "sequence.h"
 
 #define min2(a, b) ( ((a)<(b)) ? (a) : (b) )
@@ -62,5 +62,9 @@ double compute_distance(SEQUENCE seq1, SEQUENCE seq2) {
     }
     return memo[seq1.length][seq2.length];
 
+}
+
+void sequence_free(SEQUENCE sequence) {
+    free(sequence.nucleotides);
 }
 

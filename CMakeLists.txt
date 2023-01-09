@@ -3,4 +3,4 @@ project(adn_comparator C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(adn_comparator main.c sequence.c sequence.h distance.c distance.h nucleotide.c nucleotide.h file.c file.h family.c family.h double_hash_map.c double_hash_map.h sorted_linked_list.c sorted_linked_list.h)
+add_executable(adn_comparator main.c sequence/sequence.c sequence/sequence.h sequence/distance.c sequence/distance.h sequence/nucleotide.c sequence/nucleotide.h util/file.c util/file.h family/family.c family/family.h util/sorted_hash_map.c util/sorted_hash_map.h util/sorted_linked_list.c util/sorted_linked_list.h view/view.c view/view.h)

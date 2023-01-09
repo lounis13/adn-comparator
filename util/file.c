@@ -35,7 +35,7 @@ DIRECTORY directory_init(const char *directory_path) {
     if (!rep) exit(0);
     while ((dirent = readdir(rep))) {
         if (dirent->d_name[0] != '.') {
-            int filename_length = (int) (strlen(directory_path) + strlen(dirent->d_name) + 1);
+            int filename_length = (int) (strlen(directory_path) + strlen(dirent->d_name) + 2);
             directory.filenames[i] = malloc(filename_length);
             sprintf(directory.filenames[i], "%s/%s", directory_path, dirent->d_name);
             i++;
@@ -57,14 +57,21 @@ char *read_file_content(const char *filename) {
 
     // Déterminer la taille du fichier
     fseek(fp, 0L, SEEK_END);
-    int length = (int) ftell(fp);
+    int length = (int) ftell(fp) + 1;
     rewind(fp);
 
     char *content = malloc(length * sizeof(char));
     if (content == NULL) return NULL;
 
     fread(content, sizeof(char), length, fp);
-    content[length] = 0;
+    content[length - 1] = 0;
     fclose(fp);
     return content;
+}
+
+void directory_free(DIRECTORY *directory) {
+    for (int i = 0; i < directory->size; ++i) {
+        free(directory->filenames[i]);
+    }
+    free(directory->filenames);
 }

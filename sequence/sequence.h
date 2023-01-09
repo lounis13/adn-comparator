@@ -27,6 +27,8 @@ SEQUENCE sequence_from_file(const char *filename);
 
 void sequence_print(SEQUENCE sequence);
 
+void sequence_free(SEQUENCE sequence);
+
 double compute_distance(SEQUENCE seq1, SEQUENCE seq2);
 
 #endif //ADN_COMPARATOR_SEQUENCE_H
